@@ -58,6 +58,8 @@ const App = () => {
     navigate('list')
   }
 
+  // is user loggin in?
+  const [isLogged, setIsLogged] = useState(false);
   // unsuccessfull logIn
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -68,6 +70,7 @@ const App = () => {
     if (userAdmin.email == user.email && userAdmin.password == user.password) {
       // store in localStorage
       console.log("signed in as:", user);
+      setIsLogged(true);
       localStorage.setItem("user-key", JSON.stringify(user));
       setUser({email: "", password: ""})
       setErrorMsg('')
@@ -84,6 +87,7 @@ const App = () => {
   const logUserOut = () => {
 
     console.log('logged out');
+    setIsLogged(false);
     localStorage.removeItem('user-key');
     // remove the whole thing from localStorage:
     // localStorage.clear();
@@ -125,7 +129,7 @@ const App = () => {
 
       <div className='logInOut'> 
       <h1>To Do Two App</h1>
-      <FaPowerOff style={{fontSize: '1.5rem', color: 'red', cursor: 'pointer'}} onClick={logUserOut}/>
+      {isLogged && <FaPowerOff style={{fontSize: '1.5rem', color: 'red', cursor: 'pointer'}} onClick={logUserOut}/>}
       {/* <Link to=''><FaPowerOff style={{fontSize: '1.5rem', color: 'red'}}/></Link> */}
       </div>
 
