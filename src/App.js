@@ -120,7 +120,7 @@ const App = () => {
 
   // add user
   const addUser = (userParameters) => {
-    console.log('signed up');
+    console.log('signed up.');
     setUsers([...users, userParameters])
   }
 
