@@ -11,7 +11,8 @@ const Task = ({ task, onDelete, onToggle }) => {
         {task.text}
         <FaTimes onClick={() => onDelete(task.id)} />
       </h3>
-      <p>{task.day}</p>
+      <p>{task.dueDate}</p>
+      <p>{task.dueTime}</p>
     </div>
   );
 };

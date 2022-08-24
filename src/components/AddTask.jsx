@@ -1,49 +1,57 @@
 import { useState } from "react";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
+// import DatePicker from "react-datepicker";
+// import "react-datepicker/dist/react-datepicker.css";
 
 const AddTask = ({ onAdd }) => {
   const [text, setText] = useState("");
-  const [day, setDay] = useState("");
   const [reminder, setReminder] = useState(false);
-  const [date, setDate] = useState(null);
+  const [dueDate, setDueDate] = useState(new Date());
+  const [dueTime, setDueTime] = useState(null);
 
   const onSubmit = (e) => {
     e.preventDefault();
 
-    onAdd({ text, day, reminder });
+    onAdd({ text, dueDate, dueTime, reminder });
 
     setText("");
-    setDay("");
+    setDueDate(null);
+    setDueTime(null);
     setReminder(false);
   };
 
   return (
     <form className="add-form" onSubmit={onSubmit}>
       <div className="form-control">
-        <label>Task</label>
+        <label>
+          Task <span style={{ color: "red", fontWeight: "bold" }}>*</span>
+        </label>
         <input
           type="text"
           placeholder="task name"
           value={text}
+          required
           onChange={(e) => setText(e.target.value)}
         />
       </div>
+
       <div className="form-control">
-        <label>Day</label>
+        <label>
+          Select a Due <span style={{ fontSize: "0.7rem" }}>(or not)</span>
+        </label>
         <input
-          type="text"
-          placeholder="task day"
-          value={day}
-          onChange={(e) => setDay(e.target.value)}
+          type="date"
+          name="date"
+          id="date"
+          onChange={(e) => setDueDate(e.target.value)}
+        />
+
+        <input
+          type="time"
+          name="time"
+          id="time"
+          onChange={(e) => setDueTime(e.target.value)}
         />
       </div>
-      {/* date picker */}
-      <div className="form-control">
-        <label>Select a Date</label>
-        <DatePicker selected={date} onChange={(e) => setDate(e)} />
-      </div>
-      {/* date picker */}
 
       <div className="form-control form-control-check">
         <label>Set Reminder</label>

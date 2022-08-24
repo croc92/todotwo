@@ -16,18 +16,21 @@ const App = () => {
     {
       id: 1,
       text: "Task A",
-      day: 'Sat',
+      dueDate: "2023-10-25",
+      dueTime: "16:00",
       reminder: true
     },
     {
       id: 2,
       text: "Task B",
-      day: 'Sun',
+      dueDate: "2022-12-15",
+      dueTime: "16:00",
       reminder: true},
     {
       id: 3,
       text: "Task C",
-      day: 'Wed',
+      dueDate: "2023-11-30",
+      dueTime: "15:00",
       reminder: false},
   ])
   // User Array
