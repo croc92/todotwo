@@ -9,7 +9,9 @@ const AddTask = ({ onAdd }) => {
     new Date().toISOString().split("T")[0]
   );
   const [dueTime, setDueTime] = useState(
-    new Date().getHours() + ":" + new Date().getMinutes()
+    ("0" + new Date().getHours()).slice(-2) +
+      ":" +
+      ("0" + new Date().getMinutes()).slice(-2)
   );
 
   const onSubmit = (e) => {
@@ -19,7 +21,11 @@ const AddTask = ({ onAdd }) => {
 
     setText("");
     setDueDate(new Date().toISOString().split("T")[0]);
-    setDueTime(new Date().getHours() + ":" + new Date().getMinutes());
+    setDueTime(
+      ("0" + new Date().getHours()).slice(-2) +
+        ":" +
+        ("0" + new Date().getMinutes()).slice(-2)
+    );
     setReminder(false);
   };
 

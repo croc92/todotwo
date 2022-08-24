@@ -4,7 +4,7 @@ import { FaPowerOff } from 'react-icons/fa';
 import Header from './components/Header';
 import Tasks from './components/Tasks';
 import AddTask from './components/AddTask';
-import { Routes, Route, useNavigate, Link } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 // import Login from './Login';
 import SignUp from './pages/SignUp';
 import SignIn from './pages/SignIn';
@@ -61,8 +61,12 @@ const App = () => {
     navigate('list')
   }
 
+  // don't show logout button if the login page is being showed
+  const location = useLocation();
+
+
   // is user loggin in?
-  const [isLogged, setIsLogged] = useState(false);
+  // const [isLogged, setIsLogged] = useState(false);
   // unsuccessfull logIn
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -71,9 +75,9 @@ const App = () => {
     e.preventDefault()
 
     if (userAdmin.email == user.email && userAdmin.password == user.password) {
-      // store in localStorage
       console.log("signed in as:", user);
-      setIsLogged(true);
+      // setIsLogged(true);
+      // store in localStorage
       localStorage.setItem("user-key", JSON.stringify(user));
       setUser({email: "", password: ""})
       setErrorMsg('')
@@ -90,7 +94,7 @@ const App = () => {
   const logUserOut = () => {
 
     console.log('logged out');
-    setIsLogged(false);
+    // setIsLogged(false);
     localStorage.removeItem('user-key');
     // remove the whole thing from localStorage:
     // localStorage.clear();
@@ -119,6 +123,7 @@ const App = () => {
     const id = Math.floor(Math.random()*10000) + 3
     const newTask = {id, ...taskParameters}
     setTasks([...tasks, newTask])
+    localStorage.setItem('task-key', JSON.stringify([...tasks, newTask]))
   }
 
   // add user
@@ -132,7 +137,7 @@ const App = () => {
 
       <div className='logInOut'> 
       <h1>To Do Two App</h1>
-      {isLogged && <FaPowerOff style={{fontSize: '1.5rem', color: 'red', cursor: 'pointer'}} onClick={logUserOut}/>}
+      {location.pathname === '/list' && <FaPowerOff style={{fontSize: '1.5rem', color: 'red', cursor: 'pointer'}} onClick={logUserOut}/>}
       {/* <Link to=''><FaPowerOff style={{fontSize: '1.5rem', color: 'red'}}/></Link> */}
       </div>
 
