@@ -5,8 +5,12 @@ import { useState } from "react";
 const AddTask = ({ onAdd }) => {
   const [text, setText] = useState("");
   const [reminder, setReminder] = useState(false);
-  const [dueDate, setDueDate] = useState(new Date());
-  const [dueTime, setDueTime] = useState(null);
+  const [dueDate, setDueDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+  const [dueTime, setDueTime] = useState(
+    new Date().getHours() + ":" + new Date().getMinutes()
+  );
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -14,8 +18,8 @@ const AddTask = ({ onAdd }) => {
     onAdd({ text, dueDate, dueTime, reminder });
 
     setText("");
-    setDueDate(null);
-    setDueTime(null);
+    setDueDate(new Date().toISOString().split("T")[0]);
+    setDueTime(new Date().getHours() + ":" + new Date().getMinutes());
     setReminder(false);
   };
 
@@ -42,6 +46,7 @@ const AddTask = ({ onAdd }) => {
           type="date"
           name="date"
           id="date"
+          value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
         />
 
@@ -49,6 +54,7 @@ const AddTask = ({ onAdd }) => {
           type="time"
           name="time"
           id="time"
+          value={dueTime}
           onChange={(e) => setDueTime(e.target.value)}
         />
       </div>
