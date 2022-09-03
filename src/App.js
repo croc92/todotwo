@@ -55,46 +55,46 @@ const App = () => {
 
   // !!!BACKEND LOGIN!!!
   const callLoginAPI = (username, password) => {
-    const obj = {
+
+    // session'a atacagimiz body'i hazirliyoruz.
+    const requestBody = {
       username: username,
       password: password
     }
-
+    // networke request atacaksak fetch() method kullaniriz
     fetch("http://localhost:1234/session", {
       method: "POST",
       headers: {
-        'content-type' : "application/json",
+        'Content-Type' : "application/json",
       },
-      body: JSON.stringify(obj)
+      body: JSON.stringify(requestBody)
     }).then(response => {
       if(!response.ok) {
         console.log('login failed')
       } else {
-        response.json().then(body => {
-          console.log(body)
-        })
-        // console.log('login success')
-        // ??? useEffect ???
         navList();
+        response.json().then(body => {
+          callGetToDoListAPI(body.jwt)
+        })
+
       }
+
     })
 
   }
 
-    // Fetch Tasks from API
-    const fetchTasks = async() => {
-      const res = await fetch('http://localhost:1234/todo')
-      const data = await res.json()
-      return data;
-    }
-  
-    useEffect(()=> {
-      const getTasks = async () => {
-        const tasksFromServer = await fetchTasks()
-        setTasks(tasksFromServer)
-      }
-        getTasks()
-    }, [])
+  const callGetToDoListAPI = (jwt) => {
+    fetch('http://localhost:1234/todo', {
+            headers: {
+              "Content-Type" : "application/json",
+              "Authorization" : "bearer " + `${jwt}`,
+            }
+          }).then(response => {
+            response.json().then(body => {
+              setTasks(body.data)
+            })
+          })
+  }
 
   // log out - remove from Local Storage - send to Home Page
   const logUserOut = () => {
@@ -137,15 +137,11 @@ const App = () => {
       <div className='logInOut'> 
       <h1>To Do Two App</h1>
       {location.pathname === '/list' && <FaPowerOff style={{fontSize: '1.5rem', color: 'red', cursor: 'pointer'}} onClick={logUserOut}/>}
-      {/* <Link to=''><FaPowerOff style={{fontSize: '1.5rem', color: 'red'}}/></Link> */}
       </div>
 
-      {/* after routes */}
-      <Routes>
-
-        
-        {/* need to protect LIST route */}
+      <Routes>  
         <Route path='/list' element={
+          // anonym comp yerine todopage gibi bir comp olsun
           <>
           <Header isShowing={showAddTask} showAddTask={() => setshowAddTask(!showAddTask)} />
           {showAddTask && <AddTask onAdd={addTask} />}
@@ -155,24 +151,11 @@ const App = () => {
         />
 
         <Route path='' element={<SignIn username={username} password={password} onSetUsername={setUsername} onSetPassword={setPassword} onLogUser={callLoginAPI} errorMsg={errorMsg} />} />
-        <Route path='signup' element={<SignUp />} />
-
-        {/* <Route path='/' element={<Login  />}>
-          <Route path='/SignIn' element={<SignIn />}/>
-          <Route path='/SignUp' element={<SignUp onAddUser={addUser}/>}/>
-        </Route> */}
-
+        <Route path='/signup' element={<SignUp />} />
       </Routes>
-
-      {/* before routes */}
-      {/* <Header isShowing={showAddTask} showAddTask={() => setshowAddTask(!showAddTask)} /> */}
-      {/* {showAddTask && <AddTask onAdd={addTask} />} */}
-      {/* {tasks.length > 0 ? <Tasks tasks={tasks} onDelete={deleteTask} onToggle={toggleReminder} /> : 'no tasks to show'} */}
 
     </div>
   )
 }
 
 export default App
-
-
