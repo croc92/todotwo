@@ -123,7 +123,6 @@ const App = () => {
     const id = Math.floor(Math.random()*10000) + 3
     const newTask = {id, ...taskParameters}
     setTasks([...tasks, newTask])
-    localStorage.setItem('task-key', JSON.stringify([...tasks, newTask]))
   }
 
   // add user
