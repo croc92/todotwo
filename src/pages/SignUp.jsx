@@ -1,7 +1,7 @@
 // import { Link } from "react-router-dom";
 import { useState } from "react";
 
-const SignUp = ({ onAddUser }) => {
+const SignUp = ({}) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -9,7 +9,7 @@ const SignUp = ({ onAddUser }) => {
   const onSubmitUser = (e) => {
     e.preventDefault();
 
-    onAddUser({ name, email, password });
+    // onAddUser({ name, email, password });
 
     setName("");
     setEmail("");

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { FaPowerOff } from 'react-icons/fa';
 import Header from './components/Header';
 import Tasks from './components/Tasks';
@@ -12,46 +12,12 @@ import SignIn from './pages/SignIn';
 
 const App = () => {
   // Tasks Array
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      text: "Task A",
-      dueDate: "2023-10-25",
-      dueTime: "16:00",
-      reminder: true
-    },
-    {
-      id: 2,
-      text: "Task B",
-      dueDate: "2022-12-15",
-      dueTime: "16:00",
-      reminder: true},
-    {
-      id: 3,
-      text: "Task C",
-      dueDate: "2023-11-30",
-      dueTime: "15:00",
-      reminder: false},
-  ])
-  // User Array
-  const [users, setUsers] = useState([{
-    name: 'admin',
-    email: 'admin@admin.com',
-    password: 'admin',
-  },
-  {
-    name: 'test',
-    email: 'test@test.com',
-    password: 'test',
-  }
-  ])
-  // any user
-  const [user, setUser] = useState({ email: "", password: "" });
-  // Admin-user
-  const userAdmin = {
-    email: 'admin@admin.com',
-    password: '1234',
-  }
+  const [tasks, setTasks] = useState([])
+
+  // !! BACKEND user
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
   // useNavigate
   const navigate = useNavigate();
   const navHome = () => {
@@ -64,31 +30,71 @@ const App = () => {
   // don't show logout button if the login page is being showed
   const location = useLocation();
 
-
-  // is user loggin in?
-  // const [isLogged, setIsLogged] = useState(false);
-  // unsuccessfull logIn
+  // error message for unsuccessfull logIn
   const [errorMsg, setErrorMsg] = useState('')
 
   // log in - store to Local
-  const logUserIn = (e) => {
-    e.preventDefault()
+  // const logUserIn = (e) => {
+  //   e.preventDefault()
 
-    if (userAdmin.email == user.email && userAdmin.password == user.password) {
-      console.log("signed in as:", user);
-      // setIsLogged(true);
-      // store in localStorage
-      localStorage.setItem("user-key", JSON.stringify(user));
-      setUser({email: "", password: ""})
-      setErrorMsg('')
-      // navigate to List Page
-      navList();
-    } else {
-      console.log("details don't match");
-      setUser({email: "", password: ""})
-      setErrorMsg('user details don\'t match')
+  //   if (userAdmin.email == user.email && userAdmin.password == user.password) {
+  //     console.log("signed in as:", user);
+  //     // setIsLogged(true);
+  //     // store in localStorage
+  //     localStorage.setItem("user-key", JSON.stringify(user));
+  //     setUser({email: "", password: ""})
+  //     setErrorMsg('')
+  //     // navigate to List Page
+  //     navList();
+  //   } else {
+  //     console.log("details don't match");
+  //     setUser({email: "", password: ""})
+  //     setErrorMsg('user details don\'t match')
+  //   }
+  // };
+
+  // !!!BACKEND LOGIN!!!
+  const callLoginAPI = (username, password) => {
+    const obj = {
+      username: username,
+      password: password
     }
-  };
+
+    fetch("http://localhost:1234/session", {
+      method: "POST",
+      headers: {
+        'content-type' : "application/json",
+      },
+      body: JSON.stringify(obj)
+    }).then(response => {
+      if(!response.ok) {
+        console.log('login failed')
+      } else {
+        response.json().then(body => {
+          console.log(body)
+        })
+        // console.log('login success')
+        // ??? useEffect ???
+        navList();
+      }
+    })
+
+  }
+
+    // Fetch Tasks from API
+    const fetchTasks = async() => {
+      const res = await fetch('http://localhost:1234/todo')
+      const data = await res.json()
+      return data;
+    }
+  
+    useEffect(()=> {
+      const getTasks = async () => {
+        const tasksFromServer = await fetchTasks()
+        setTasks(tasksFromServer)
+      }
+        getTasks()
+    }, [])
 
   // log out - remove from Local Storage - send to Home Page
   const logUserOut = () => {
@@ -123,13 +129,6 @@ const App = () => {
     const id = Math.floor(Math.random()*10000) + 3
     const newTask = {id, ...taskParameters}
     setTasks([...tasks, newTask])
-    localStorage.setItem('task-key', JSON.stringify([...tasks, newTask]))
-  }
-
-  // add user
-  const addUser = (userParameters) => {
-    console.log('signed up.');
-    setUsers([...users, userParameters])
   }
 
   return (
@@ -155,8 +154,8 @@ const App = () => {
           } 
         />
 
-        <Route path='' element={<SignIn user={user} onSetUser={setUser} onLogUser={logUserIn} errorMsg={errorMsg} />} />
-        <Route path='signup' element={<SignUp onAddUser={addUser} />} />
+        <Route path='' element={<SignIn username={username} password={password} onSetUsername={setUsername} onSetPassword={setPassword} onLogUser={callLoginAPI} errorMsg={errorMsg} />} />
+        <Route path='signup' element={<SignUp />} />
 
         {/* <Route path='/' element={<Login  />}>
           <Route path='/SignIn' element={<SignIn />}/>

@@ -1,44 +1,44 @@
 import { Link } from "react-router-dom";
 // import { useState } from "react";
 
-const SignIn = ({ onShow, user, onSetUser, onLogUser, errorMsg }) => {
-  // const [user,setUser] bu componentten globale cekip, baska sekilde yaklasim; fonk.u disarda yazip, form icinde sadece cagirmak:
-  const handleEmailChange = (e) => {
-    onSetUser({ ...user, email: e.target.value });
+const SignIn = ({
+  onShow,
+  username,
+  password,
+  onSetUsername,
+  onSetPassword,
+  onLogUser,
+  errorMsg,
+}) => {
+  const handleUsernameChange = (e) => {
+    onSetUsername(e.target.value);
   };
   const handlePasswordChange = (e) => {
-    onSetUser({ ...user, password: e.target.value });
+    onSetPassword(e.target.value);
   };
 
-  // const logUserIn = (e) => {
-  //   // e.preventDefault();
-
-  //   if (userAdmin.email == user.email && userAdmin.password == user.password) {
-  //     // store in localStorage
-  //     console.log("signed in", user);
-  //     localStorage.setItem("user-key", JSON.stringify(user));
-  //   } else {
-  //     console.log("no such user");
-  //   }
-  // };
+  const onFormSubmit = (e) => {
+    e.preventDefault();
+    onLogUser(username, password);
+  };
 
   return (
     <div className="container">
-      <form className="add-form" onSubmit={onLogUser}>
+      <form className="add-form" onSubmit={onFormSubmit}>
         <div className="form-control">
-          <label>Email</label>
+          <label>Username</label>
           <input
-            type="email"
-            value={user.email}
+            type="text"
+            value={username}
             // onChange={(e) => setUser({ ...user, email: e.target.value })}
-            onChange={handleEmailChange}
+            onChange={handleUsernameChange}
           />
         </div>
         <div className="form-control">
           <label>Password</label>
           <input
             type="password"
-            value={user.password}
+            value={password}
             // onChange={(e) => setUser({ ...user, password: e.target.value })}
             onChange={handlePasswordChange}
           />
