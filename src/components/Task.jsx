@@ -3,9 +3,14 @@ import { FaTimes } from "react-icons/fa";
 
 const Task = ({ task, onDelete, onToggle }) => {
   const dueDate = new Date(task.dueDatetime);
-  const dueDateFirstRow = `${dueDate.getFullYear()}-${
-    dueDate.getMonth() + 1
-  }-${dueDate.getDay()}`;
+  // const dueDateFirstRow = `${dueDate.getFullYear()}-${
+  //   dueDate.getMonth() + 1
+  // }-${dueDate.getDay()}`;
+  // const dueDateSecondRow = `${dueDate.getHours()}:${dueDate.getMinutes()}`;
+  const dueDatePartOne = `${dueDate.toISOString().split("T")[0]}`;
+  const dueDatePartTwo = `${("0" + dueDate.getHours()).slice(-2)}:${(
+    "0" + dueDate.getMinutes()
+  ).slice(-2)}`;
 
   return (
     <div
@@ -16,8 +21,8 @@ const Task = ({ task, onDelete, onToggle }) => {
         {task.title}
         <FaTimes onClick={() => onDelete(task.id)} />
       </h3>
-      <p>{dueDateFirstRow}</p>
-      <p>{task.dueTime}</p>
+      <p>{dueDatePartOne}</p>
+      <p>{dueDatePartTwo}</p>
     </div>
   );
 };

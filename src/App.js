@@ -29,33 +29,11 @@ const App = () => {
 
   // don't show logout button if the login page is being showed
   const location = useLocation();
-
   // error message for unsuccessfull logIn
   const [errorMsg, setErrorMsg] = useState('')
 
-  // log in - store to Local
-  // const logUserIn = (e) => {
-  //   e.preventDefault()
-
-  //   if (userAdmin.email == user.email && userAdmin.password == user.password) {
-  //     console.log("signed in as:", user);
-  //     // setIsLogged(true);
-  //     // store in localStorage
-  //     localStorage.setItem("user-key", JSON.stringify(user));
-  //     setUser({email: "", password: ""})
-  //     setErrorMsg('')
-  //     // navigate to List Page
-  //     navList();
-  //   } else {
-  //     console.log("details don't match");
-  //     setUser({email: "", password: ""})
-  //     setErrorMsg('user details don\'t match')
-  //   }
-  // };
-
   // !!!BACKEND LOGIN!!!
   const callLoginAPI = (username, password) => {
-
     // session'a atacagimiz body'i hazirliyoruz.
     const requestBody = {
       username: username,
@@ -67,6 +45,7 @@ const App = () => {
       headers: {
         'Content-Type' : "application/json",
       },
+      // body objectini json stringe cevirmek lazim ki fetch calissin
       body: JSON.stringify(requestBody)
     }).then(response => {
       if(!response.ok) {
@@ -74,15 +53,17 @@ const App = () => {
       } else {
         navList();
         response.json().then(body => {
+          localStorage.setItem('token-key', body.jwt);
           callGetToDoListAPI(body.jwt)
         })
-
+      
       }
 
     })
 
   }
-
+  
+  // GET LIST
   const callGetToDoListAPI = (jwt) => {
     fetch('http://localhost:1234/todo', {
             headers: {
@@ -92,6 +73,7 @@ const App = () => {
           }).then(response => {
             response.json().then(body => {
               setTasks(body.data)
+
             })
           })
   }
@@ -116,19 +98,40 @@ const App = () => {
 
   // delete Task
   const deleteTask = (idParam) => {
-    setTasks(tasks.filter(task => task.id !== idParam))
+
+    const getTokenKey = localStorage.getItem('token-key')
+
+    fetch(`http://localhost:1234/todo/${idParam}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type" : "application/json",
+        "Authorization" : "bearer " + `${getTokenKey}`,
+      },
+    }).then(()=> setTasks(tasks.filter(task => task.id !== idParam)))
+    
   }
 
-  // toggle reminder
+  // toggle reminder (waiting for allef PUT)
   const toggleReminder = (idParam) => {
     setTasks(tasks.map(task => task.id === idParam ? {...task, reminder: !task.reminder} : task))
   }
 
-  // add task
+  // add task({title: 'task', dueDatetime:'2022-09-04T14:14:14.000Z', reminder: boolean})
   const addTask = (taskParameters) => {
-    const id = Math.floor(Math.random()*10000) + 3
-    const newTask = {id, ...taskParameters}
-    setTasks([...tasks, newTask])
+
+    const getTokenKey = localStorage.getItem('token-key')
+
+    fetch('http://localhost:1234/todo', {
+      method: 'POST',
+      headers: {
+        "Content-Type" : "application/json",
+        "Authorization" : "bearer " + `${getTokenKey}`,
+      },
+      body: JSON.stringify(taskParameters)
+    }).then(response => {
+      response.json().then(responseBody => setTasks([...tasks, responseBody.data]))
+    })
+
   }
 
   return (
@@ -141,7 +144,7 @@ const App = () => {
 
       <Routes>  
         <Route path='/list' element={
-          // anonym comp yerine todopage gibi bir comp olsun
+          // ----- anonym comp yerine todopage gibi bir comp olsun -------
           <>
           <Header isShowing={showAddTask} showAddTask={() => setshowAddTask(!showAddTask)} />
           {showAddTask && <AddTask onAdd={addTask} />}
