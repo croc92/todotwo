@@ -143,6 +143,7 @@ const App = () => {
       </div>
 
       <Routes>  
+
         <Route path='/list' element={
           // ----- anonym comp yerine todopage gibi bir comp olsun -------
           <>
@@ -152,7 +153,7 @@ const App = () => {
           </>
           } 
         />
-
+        
         <Route path='' element={<SignIn username={username} password={password} onSetUsername={setUsername} onSetPassword={setPassword} onLogUser={callLoginAPI} errorMsg={errorMsg} />} />
         <Route path='/signup' element={<SignUp />} />
       </Routes>

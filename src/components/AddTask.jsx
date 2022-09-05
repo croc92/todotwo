@@ -36,12 +36,14 @@ const AddTask = ({ onAdd }) => {
 
       <div className="form-control">
         <label>
-          Select a Due <span style={{ fontSize: "0.7rem" }}>(or not)</span>
+          Select a Due
+          <span style={{ color: "red", fontWeight: "bold" }}> *</span>
         </label>
         <input
           type="datetime-local"
           name="datetime"
           id="date"
+          required
           value={dueDatetime}
           onChange={(e) => setDueDatetime(e.target.value)}
         />
@@ -99,3 +101,5 @@ export default AddTask;
 // setDueDatetime(combinedDate);
 
 // setDueDatetime(`${concatDateTimeString(dueDay, dueTime)}`);
+
+// ------------------ WORKING LIKE A CHARM 05-09-22 12:26 ----
